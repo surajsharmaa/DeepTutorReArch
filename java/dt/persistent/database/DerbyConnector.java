@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import dt.entities.database.Student;
+import dt.entities.database.TodoItem;
 import java.util.List;
 
 /**
@@ -47,6 +48,7 @@ public class DerbyConnector {
             Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
             // Get a connection
             conn = DriverManager.getConnection(dbURL);
+            System.out.println("Connected to DB");
         } catch (Exception except) {
             except.printStackTrace();
         }
@@ -121,7 +123,7 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 
-			String query = "select * from Demographics where givenId='"
+			String query = "select * from Demographics where STUDENTID='"
 					+ s.getStudentId() + "'";
 			ResultSet results = stmt.executeQuery(query);
 			hasDemographics = results.next();
@@ -141,7 +143,7 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 
-			String query = "select * from Student where givenId='"
+			String query = "select * from Student where STUDENTID='"
 					+ s.getStudentId() + "'";
 			ResultSet results = stmt.executeQuery(query);
 			while (results.next())
@@ -163,7 +165,7 @@ public class DerbyConnector {
 		try
 		{
 			stmt = conn.createStatement();
-			stmt.execute("update student set hasSeenTutorial = 1 where givenId='"
+			stmt.execute("update student set hasSeenTutorial = 1 where STUDENTID='"
 					+ s.getStudentId() + "'");
 			stmt.close();
 		}
@@ -180,7 +182,7 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 
-			String query = "select * from Evaluation where givenId='"
+			String query = "select * from Evaluation where STUDENT_FK='"
 					+ s.getStudentId() + "' and evaluationId='" + evaluationId
 					+ "'";
 			ResultSet results = stmt.executeQuery(query);
@@ -206,8 +208,8 @@ public class DerbyConnector {
                         
                         s.setEvaluations(evaluationsList);
                         
-			//s.evaluationData = data;
-			//s.evaluationContext = context;
+			s.evaluationData = data;
+			s.evaluationContext = context;
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -262,7 +264,7 @@ public class DerbyConnector {
 		try
 		{
 			stmt = conn.createStatement();
-			String query = "insert into Evaluation (givenId, evaluationId, contextId, questionId, answer, explanation) values "
+			String query = "insert into Evaluation (STUDENT_FK, evaluationId, contextId, questionId, answer, explanation) values "
 					+ "('"
 					+ studentId
 					+ "', '"
@@ -289,7 +291,7 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 
-			String query = "select * from LearningModel where givenId='"
+			String query = "select * from LearningModel where STUDENTID='"
 					+ s.getStudentId() + "'";
 			ResultSet results = stmt.executeQuery(query);
 
@@ -314,10 +316,10 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 
-			stmt.execute("delete from LearningModel where givenId='"
+			stmt.execute("delete from LearningModel where STUDENTID='"
 					+ s.getStudentId() + "'");
 
-			String query = "insert into LearningModel (givenId, completedTasks, currentTask) values "
+			String query = "insert into LearningModel (STUDENTID, completedTasks, currentTask) values "
 					+ "('"
 					+ s.getStudentId()
 					+ "', '"
@@ -337,7 +339,7 @@ public class DerbyConnector {
 		try
 		{
 			stmt = conn.createStatement();
-			stmt.execute("update student set hasAcceptedTermsAndConditions = 1 where givenId='"
+			stmt.execute("update student set hasAcceptedTermsAndConditions = 1 where STUDENTID='"
 					+ givenId + "'");
 			stmt.close();
 		}
@@ -369,7 +371,7 @@ public class DerbyConnector {
 		{
 			stmt = conn.createStatement();
 			stmt.execute("update student set PRETESTSCORE = " + score
-					+ " where givenId='" + givenId + "'");
+					+ " where STUDENTID='" + givenId + "'");
 			stmt.close();
 		}
 		catch (SQLException sqlExcept)
@@ -574,77 +576,77 @@ public class DerbyConnector {
 		return result;
 	}
 
-//	public TodoItem[] GetTodoItems()
-//	{
-//		ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();
-//
-//		try
-//		{
-//			stmt = conn.createStatement();
-//			String query = "select todoID, creator, assignee, text, response, dateCreated, dateClosed from TodoItems where dateClosed is null order by dateCreated desc";
-//			ResultSet results = stmt.executeQuery(query);
-//			while (results.next())
-//			{
-//				TodoItem item = new TodoItem();
-//				item.setTodoID(results.getInt(1));
-//				item.setCreator(results.getString(2));
-//				item.setAssignee(results.getString(3));
-//				item.setText(results.getString(4).replaceAll("`", "'"));
-//				item.setResponse(results.getString(5).replaceAll("`", "'"));
-//				item.setDateCreated(results.getTimestamp(6));
-//				item.setDateClosed(results.getTimestamp(7));
-//
-//				todoItems.add(item);
-//			}
-//
-//		}
-//		catch (SQLException sqlExcept)
-//		{
-//			sqlExcept.printStackTrace();
-//		}
-//
-//		TodoItem[] result = new TodoItem[todoItems.size()];
-//		return todoItems.toArray(result);
-//	}
-//
-//	public int CreateTodoItem(TodoItem item)
-//	{
-//		// delete, if exists and recreate again
-//		try
-//		{
-//			stmt = conn.createStatement();
-//			int taskID = 1;
-//
-//			ResultSet results = stmt
-//					.executeQuery("select max(todoID) from TodoItems");
-//			if (results.next())
-//			{
-//				taskID = results.getInt(1) + 1;
-//			}
-//
-//			String query = "insert into TodoItems (todoId, creator, assignee, text, response, datecreated, dateclosed) values "
-//					+ "('"
-//					+ taskID
-//					+ "', '"
-//					+ item.getCreator()
-//					+ "', '"
-//					+ item.getAssignee()
-//					+ "','"
-//					+ item.getText()
-//					+ "', '', '"
-//					+ new Timestamp((new Date()).getTime()) + "', null)";
-//			stmt.execute(query);
-//			stmt.close();
-//			return taskID;
-//
-//		}
-//		catch (SQLException sqlExcept)
-//		{
-//			sqlExcept.printStackTrace();
-//		}
-//
-//		return -1;
-//	}
+	public TodoItem[] GetTodoItems()
+	{
+		ArrayList<TodoItem> todoItems = new ArrayList<TodoItem>();
+
+		try
+		{
+			stmt = conn.createStatement();
+			String query = "select todoID, creator, assignee, text, response, dateCreated, dateClosed from TodoItems where dateClosed is null order by dateCreated desc";
+			ResultSet results = stmt.executeQuery(query);
+			while (results.next())
+			{
+				TodoItem item = new TodoItem();
+				item.setTodoID(results.getInt(1));
+				item.setCreator(results.getString(2));
+				item.setAssignee(results.getString(3));
+				item.setText(results.getString(4).replaceAll("`", "'"));
+				item.setResponse(results.getString(5).replaceAll("`", "'"));
+				item.setDateCreated(results.getTimestamp(6));
+				item.setDateClosed(results.getTimestamp(7));
+
+				todoItems.add(item);
+			}
+
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+
+		TodoItem[] result = new TodoItem[todoItems.size()];
+		return todoItems.toArray(result);
+	}
+
+	public int CreateTodoItem(TodoItem item)
+	{
+		// delete, if exists and recreate again
+		try
+		{
+			stmt = conn.createStatement();
+			int taskID = 1;
+
+			ResultSet results = stmt
+					.executeQuery("select max(todoID) from TodoItems");
+			if (results.next())
+			{
+				taskID = results.getInt(1) + 1;
+			}
+
+			String query = "insert into TodoItems (todoId, creator, assignee, text, response, datecreated, dateclosed) values "
+					+ "("
+					+ taskID
+					+ ", '"
+					+ item.getCreator()
+					+ "', '"
+					+ item.getAssignee()
+					+ "','"
+					+ item.getText()
+					+ "', '', '"
+					+ new Timestamp((new Date()).getTime()) + "', null)";
+			stmt.execute(query);
+			stmt.close();
+			return taskID;
+
+		}
+		catch (SQLException sqlExcept)
+		{
+			sqlExcept.printStackTrace();
+		}
+
+		return -1;
+	}
 
 	public synchronized boolean UpdateTodoItem(int itemID, String response)
 	{

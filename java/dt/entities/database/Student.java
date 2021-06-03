@@ -11,6 +11,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.CascadeType;
@@ -45,6 +47,8 @@ public class Student implements Serializable {
     String dtMode2;
     String dtMode3;
     private List<Evaluation> evaluations;
+    public Hashtable<String, String> evaluationData = null;
+    public HashSet<String> evaluationContext = null;
     Demographics demography;
     String assignedTasks; //should be comma separated task ids or so
     String finishedTasks; //should have comma separated task ids or so.

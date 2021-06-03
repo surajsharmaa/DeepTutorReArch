@@ -170,6 +170,11 @@
             <result name="success">admin/admin.jsp</result>
         </action>
         
+        <!-- Developer TODO List -->
+        <action name = "todo" class = "dt.actions.admin.TodoListManager" method = "execute">
+            <result name="success">admin/todo.jsp</result>
+        </action>
+        
         <!-- Experiment Manager-->
         <action name = "experiment" class = "dt.actions.admin.ExperimentAssistant" method = "execute">
             <result name="success">admin/ExperimentAssistant.jsp</result>
@@ -196,13 +201,28 @@
         </action>
         
         <!-- Task Manager-->
+        
+        <action name="authoring" class= "dt.actions.admin.AdminCreateTask" method="execute" >
+            <result name="success">admin/Tasks.jsp</result>
+        </action>
         <action name="dtadminTasks" >
             <result>admin/Tasks.jsp</result>
         </action>
+        
+        <!-- Students LP view -->
+        <action name = "lpview" class = "dt.actions.admin.StudentsLPModelViewer" method = "execute">
+            <result name="success">admin/lpview.jsp</result>
+        </action>
+        
+        <action name="adminContactUs">
+            <result>admin/AdminContactUs.jsp</result>
+        </action>
+        
+        
         <action name="adminLogout"
             class="dt.actions.authentication.LogoutAction"
             method="execute">
-            <result name = "success">admin/AdminLogout.jsp</result>
+            <result name = "success">admin/AdminLogin.jsp</result>
         </action>        
     </package>
 </struts>

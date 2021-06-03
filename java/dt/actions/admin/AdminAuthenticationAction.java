@@ -25,7 +25,7 @@ public class AdminAuthenticationAction implements SessionAware {
     public String execute() throws Exception {
         session.clear();
         System.out.println("Username: " + getUserName()+ " Password: "+ getPassword());
-        if(getUserName()!=null && getUserName().trim().equals("admin") && getPassword()!=null && getPassword().trim().equals("lips310")){
+        if(getUserName()!=null && getUserName().trim().equals("dtadmin") && getPassword()!=null && getPassword().trim().equals("dtauthor310")){
             session.put("adminLoginSuccesfull", "true");
             return Result.SUCCESS;
         } else {
